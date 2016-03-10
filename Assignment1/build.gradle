@@ -1,0 +1,9 @@
+apply plugin : 'java'
+
+task(Train , dependsOn :'classes' , type: JavaExec)
+{
+	main = 'java.Main'
+	classpath = sourceSets.main.runtimeClasspath
+}
+
+defaultTasks 'Train'
