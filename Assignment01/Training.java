@@ -185,7 +185,6 @@ class Training
 					//reccursivley adds the probability value of the word being used in spam to a variable called n
 					String word = sc.next();
 					Float val = wordP.get(new String (word));
-					System.out.println(val);
 					if (val!=null && val !=0)
 					{
 						n+=(Math.log(1-val)-Math.log(val));
