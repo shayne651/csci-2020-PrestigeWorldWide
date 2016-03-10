@@ -164,7 +164,9 @@ class Training
 	}
 	public static void Testing()
 	{
-		Float n;
+		//holds the variable that is n
+		Double n;
+		//holds the end results for the File name with the Probability of if the file is 
 		probabilityFiles = new TreeMap<String, Double>();
 		try 
 		{	
@@ -175,7 +177,7 @@ class Training
 
 			for (File file : textFilesH)
 			{
-				n=0f;
+				n=0.0;
 				Scanner sc = new Scanner(file);
 				PrintWriter writer = new PrintWriter("WordProbabilities","UTF-8");
 				while (sc.hasNext())
@@ -184,11 +186,10 @@ class Training
 					String word = sc.next();
 					Float val = wordP.get(new String (word));
 					System.out.println(val);
-					if (val!=null)
+					if (val!=null && val !=0)
 					{
-						n+=val;
+						n+=(Math.log(1-val)-Math.log(val));
 					}
-					//after this we can plug into the formula to find the proability of the file being spam. Need a Map or list to hold the Name of the file as well as the probability that it is spam. I will decide what to keep it in once i review how the UI sets up tables with predetermined values 
 				}
 				Double fileProbability =1/(1+(Math.pow(Math.E,n)));
 				String fileName = file.getName();
