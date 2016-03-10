@@ -119,7 +119,7 @@ public class Main extends Application {
         editArea.setVgap(10);
         editArea.setHgap(10);
 
-        double accuracy = 0.1234;
+        double accuracy = trainy.getAcc();
         String sAccuracy = String.valueOf(accuracy);
 
         Label accLabel = new Label("Accuracy:");
@@ -128,7 +128,7 @@ public class Main extends Application {
         accField.setPromptText(sAccuracy);
         editArea.add(accField, 1, 1);
 
-        double precision = 0.7070;
+        double precision = trainy.getPrec();
         String sPrecision = String.valueOf(precision);
 
 
