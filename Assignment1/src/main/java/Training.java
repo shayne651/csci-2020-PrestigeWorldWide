@@ -15,10 +15,13 @@ class Training
 	private static String path;
 	protected static Map<String, Float> wordP;
 	protected static Map<String, Double> probabilityFiles;
-	private static int SpamFiles1;
+	private static double SpamFiles1;
 	private static int HamFiles1;
-	private static double precision;
-	private static double accuracy;
+	public static double precision;
+	public static double accuracy;
+	private static int wrong;
+	private static File[] textFilesH;
+	private static File[] textFilesS;
 
 	public Training(String path){
 		this.path = path;
@@ -137,6 +140,7 @@ class Training
 		hamP = new TreeMap<String,Float>();
 		spamP = new TreeMap<String,Float>();
 		Iterator<Map.Entry<String,Integer>> it = ham.entrySet().iterator();
+		//uses the existing maps to make new ones with probabilites for the words being spam
 		while (it.hasNext())
 		{
 			Map.Entry<String,Integer> hamEntry =it.next();
@@ -181,13 +185,14 @@ class Training
 		try 
 		{	
 			File directory = new File(path + "/test/ham/");
-			File[] textFilesH = directory.listFiles();
+			textFilesH = directory.listFiles();
 			directory = new File(path + "/test/spam");
-			File[] textFilesS = directory.listFiles();
+			textFilesS = directory.listFiles();
 
 			for (File file : textFilesH)
 			{
 				n=0.0;
+				//used for writing out the results to a file
 				Scanner sc = new Scanner(file);
 				PrintWriter writer = new PrintWriter("WordProbabilities","UTF-8");
 				while (sc.hasNext())
@@ -195,7 +200,7 @@ class Training
 					//reccursivley adds the probability value of the word being used in spam to a variable called n
 					String word = sc.next();
 					Float val = wordP.get(new String (word));
-					//System.out.println(val);
+					//makes sure that val is not null or 0 because they give wrong values
 					if (val!=null && val !=0)
 					{
 						n+=(Math.log(1-val)-Math.log(val));
@@ -222,32 +227,109 @@ class Training
 	public static void AccuracyAndPrecision()
 	{
 		SpamFiles1=0;
-		HamFiles1=0;
 		precision=0;
+
 		try
 		{
+			//the following forloops and vairbales are turning a array of files into an array of Strings to make for easier comparing with other Strings
+			File directory = new File(path + "/test/ham/");
+			File[] textFilesH = directory.listFiles();
+			String[] stringFileH = new String[textFilesH.length];
+			directory = new File(path + "/test/spam");
+			File[] textFilesS = directory.listFiles();
+			String [] stringFileS= new String[textFilesS.length];
+			int i=0;
+			for (File file :textFilesS)
+			{
+				stringFileS[i] = file.getName();
+				i++;
+			}
+			i=0;
+			for (File file :textFilesH)
+			{
+				stringFileH[i] = file.getName();
+				i++;
+			}
+			//scanning in the word document with all of the file names and probabilities so we can do the calculations
 			Scanner sc = new Scanner(new File("WordProbabilities"));
 			while (sc.hasNext())
 			{
 				String fName = sc.next();
-				Double val = Double.parseDouble(sc.next());
-				String type = "";
-				if (val > 0.95 )
+				Double val;
+				//not sure what the error was here but this was needed for it to run
+				try 
 				{
-					SpamFiles1++;
+					val = Double.parseDouble(sc.next());
+				}
+				catch (Exception e)
+				{
+					val= 0.0;
+				}
+				//if anythign is above a 90% chance it is spam we consider it spam
+				if (val > 0.90 )
+				{
+					if (contains(stringFileS,fName))
+					{
+						//counts our spam files
+						SpamFiles1++;
+					}
+					else 
+					{
+						//counts our spam files and the files that we got wrong
+						SpamFiles1++;
+						wrong++;
+					}
 				}
 				else 
 				{
-					HamFiles1++;
+					if (contains(stringFileH,fName))
+					{
+						//counts ham files
+						HamFiles1++;
+					}
+					else 
+					{
+						//counts ham files and incorrect files
+						HamFiles1++;
+						wrong++;
+					}
 				}
 			}
+			//finds the total files that we scanned
+			double total = spamFiles+hamFiles;
+			double correct = total - wrong;
+			accuracy =correct/total;
 			precision = SpamFiles1/spamFiles;
-			System.out.println(precision);
+			PrintWriter writer = new PrintWriter("AnP","UTF-8");
+			writer.println(accuracy +" "+precision);
+
 			
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
+	}
+	public static Boolean contains(String[] list , String val)
+	{
+		//searches a array for a input
+		for (int i=0;i<=list.length-1;i++)
+		{
+			if (list[i].equals(val))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	public double getAcc()
+	{
+		//used in the UI
+		return accuracy;
+	}
+	public double getPrec()
+	{
+		//used in the UI
+		return precision;
 	}
 }
