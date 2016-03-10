@@ -13,6 +13,7 @@ class Training
 	private static int hamFiles;
 	private static int spamFiles;
 	protected static Map<String, Float> wordP;
+	protected static Map<String, Double> probabilityFiles;
 
 	public static void main(String[] args) 
 	{
@@ -112,6 +113,7 @@ class Training
 				}
 			}
 			probabilitiesCalculations(trainHamFreq,trainSpamFreq);
+			Testing();
 		}
 		catch(Exception e)
 		{
@@ -121,6 +123,7 @@ class Training
 
 	public static void probabilitiesCalculations(HashMap<String,Integer> ham , HashMap<String,Integer> spam)
 	{
+		wordP = new TreeMap<String,Float>();
 		hamP = new TreeMap<String,Float>();
 		spamP = new TreeMap<String,Float>();
 		Iterator<Map.Entry<String,Integer>> it = ham.entrySet().iterator();
@@ -140,6 +143,69 @@ class Training
 			int spamWordsInt = spamEntry.getValue();
 			Float spamProbability = ((float)spamWordsInt)/spamFiles;
 			spamP.put(spamWords,spamProbability);
+		}
+		Iterator<Map.Entry<String,Float>> it2 = hamP.entrySet().iterator();
+		while(it2.hasNext())
+		{
+			Map.Entry<String,Float> wordsP = it2.next();
+			String wordHold = wordsP.getKey();
+			Float hamProb = wordsP.getValue();
+			Float spamProb = spamP.get(new String(wordHold));
+			if(spamProb == null)
+			{
+				wordP.put(wordHold,0f);
+			}
+			else
+			{
+				Float wordProb = (spamProb)/(spamProb+hamProb);
+				wordP.put(wordHold,wordProb);
+			}
+		}
+	}
+	public static void Testing()
+	{
+		Float n;
+		probabilityFiles = new TreeMap<String, Double>();
+		try 
+		{	
+			File directory = new File("data/test/ham/");
+			File[] textFilesH = directory.listFiles();
+			directory = new File("data/test/spam");
+			File[] textFilesS = directory.listFiles();
+
+			for (File file : textFilesH)
+			{
+				n=0f;
+				Scanner sc = new Scanner(file);
+				PrintWriter writer = new PrintWriter("WordProbabilities","UTF-8");
+				while (sc.hasNext())
+				{
+					//reccursivley adds the probability value of the word being used in spam to a variable called n
+					String word = sc.next();
+					Float val = wordP.get(new String (word));
+					System.out.println(val);
+					if (val!=null)
+					{
+						n+=val;
+					}
+					//after this we can plug into the formula to find the proability of the file being spam. Need a Map or list to hold the Name of the file as well as the probability that it is spam. I will decide what to keep it in once i review how the UI sets up tables with predetermined values 
+				}
+				Double fileProbability =1/(1+(Math.pow(Math.E,n)));
+				String fileName = file.getName();
+				probabilityFiles.put(fileName,fileProbability);
+				Iterator<Map.Entry<String,Double>> it = probabilityFiles.entrySet().iterator();
+				while (it.hasNext())
+				{
+					Map.Entry<String,Double> wordsP = it.next();
+					String wordHold = wordsP.getKey();
+					Double prob = wordsP.getValue();
+					writer.println(wordHold + " " + prob);
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
 		}
 	}
 }
