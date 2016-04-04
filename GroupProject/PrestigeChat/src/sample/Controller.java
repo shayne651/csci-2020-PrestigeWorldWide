@@ -10,7 +10,7 @@ import javafx.scene.layout.VBox;
 public class Controller {
 
     @FXML
-    private static TextArea messages = new TextArea();
+    private TextArea messages = new TextArea();
 
     @FXML
     private TextField input = new TextField();
@@ -25,7 +25,7 @@ public class Controller {
         messages.appendText(message + "\n");
 
         try {
-            client.sendMessage(message);
+            client.sendMessage(client.getMessage());
         }
         catch (Exception e) {
             messages.appendText("Failed to send\n");
