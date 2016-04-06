@@ -77,14 +77,14 @@ public abstract class SocketsThread extends Thread
 		return message;
 	}
 
-	public void listen()throws Exception
+	public String listen()throws Exception
 	{
 		//the listen function will just wait to receive the messages
 		while(true)
 		{
 			message1 = getMessage();
 			playSound();
-			System.out.println(message1);
+			return message1;
 		}
 	}
 
@@ -103,7 +103,7 @@ public abstract class SocketsThread extends Thread
 		out.flush();
 	}
 
-	public void receiveFile(String name)throws Exception
+	public void downloadFile(String name)throws Exception
 	{
 		//receving the fileSize
 		InputStream is = cSocket.getInputStream();

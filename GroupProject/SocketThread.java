@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 class SocketThread extends SocketsThread
 {
+	public String message;
 	public SocketThread(int port, String ip)
 	{
 		super(port,ip);
@@ -17,7 +18,10 @@ class SocketThread extends SocketsThread
 			System.out.println("Connected to server");
 			cSocket.setTcpNoDelay(true);
 			
-			listen();
+			while (true)
+			{
+				clientStart.messages.appendText(listen()+"\n");
+			}
 		}
 		catch(Exception e)
 		{
