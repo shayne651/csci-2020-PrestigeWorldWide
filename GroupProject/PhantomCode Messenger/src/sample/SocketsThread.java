@@ -2,7 +2,6 @@ package sample;
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -18,6 +17,9 @@ public abstract class SocketsThread extends Thread
 	protected String ip;
 	protected ServerSocket sSocket;
 	protected String message1;
+	protected Socket fileTransferS;
+	protected ServerSocket fileTransferServer;
+	
 
 	public SocketsThread(int port)
 	{
@@ -90,47 +92,6 @@ public abstract class SocketsThread extends Thread
 		}
 	}
 
-	public void sendFile(File file)throws Exception
-	{
-		//sending the fileSize
-		String length = String.valueOf(file.length());
-		sendMessage(length);
-		//sending the file
-		byte[] transferFile = new byte[(int)file.length()];
-		FileInputStream fin = new FileInputStream(file);
-		BufferedInputStream bin = new BufferedInputStream(fin);
-		bin.read(transferFile,0,transferFile.length);
-		OutputStream out = cSocket.getOutputStream();
-		out.write(transferFile,0,transferFile.length);
-		out.flush();
-	}
-
-	public void downloadFile(String name)throws Exception
-	{
-		//receving the fileSize
-		InputStream is = cSocket.getInputStream();
-		DataInputStream read = new DataInputStream(is);
-		int length = read.readInt();
-		//receving the file
-		byte[] newFile = new byte[length];
-		FileOutputStream fos = new FileOutputStream(name);
-		BufferedOutputStream out  = new BufferedOutputStream(fos);
-		int bytesRead = is.read(newFile,0,newFile.length);
-		int currentTotal = bytesRead;
-
-		while(bytesRead > -1)
-		{
-			bytesRead = is.read(newFile,currentTotal,(newFile.length-currentTotal));
-			if (bytesRead >= 0)
-			{
-				currentTotal+=bytesRead;
-			}
-		}
-		out.write(newFile,0,currentTotal);
-		out.flush();
-		out.close();
-	}
-
 	public void playSound() throws Exception
 	{
 		//plays a sound
@@ -138,5 +99,11 @@ public abstract class SocketsThread extends Thread
 		Clip clip = AudioSystem.getClip();
 		clip.open(audioIn);
 		clip.start();
+	}
+	
+	public void close() throws Exception
+	{
+		cSocket.close();
+		sSocket.close();
 	}
 }

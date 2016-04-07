@@ -10,12 +10,12 @@ import javafx.scene.layout.VBox;
 public class Controller {
 
     @FXML
-    private TextArea messages = new TextArea();
+    public static TextArea messages = new TextArea();
 
     @FXML
-    private TextField input = new TextField();
+    public TextField input = new TextField();
 
-    private static SocketThread client;
+    public static SocketThread client;
 
     public void sendMessage(){
         String message = "Client: ";

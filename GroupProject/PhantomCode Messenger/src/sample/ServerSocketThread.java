@@ -1,12 +1,13 @@
 package sample;
 
-import java.io.*;
 import java.net.*;
+import java.io.*;
 
 class ServerSocketThread extends SocketsThread
 {
 
 	public String message;
+	private FileTransferThread transferFiles;
 
 	public ServerSocketThread(int port)
 	{
@@ -17,6 +18,7 @@ class ServerSocketThread extends SocketsThread
 	{
 		try
 		{
+
 			//makes the server listen for messages
 			sSocket = new ServerSocket(port);
 			cSocket = sSocket.accept();
@@ -27,16 +29,19 @@ class ServerSocketThread extends SocketsThread
 				message = listen();
 				if (message.toLowerCase().contains("/upload"))
 				{
+					transferFiles = new FileTransferThread();
 					sendMessage("/file waiting to be downloaded");
-					sendFile(new File("./message.wav"));
+					transferFiles.sendFile(new File("./message.wav"));
+					transferFiles.close();
 				}
 				else if (message.toLowerCase().contains("/file"))
 				{
-					downloadFile(("message.wav"));
+					transferFiles.downloadFile("message.wav");
+					//downloadFile(("message.wav"));
 				}
-				else
+				else if (message !=null)
 				{
-					Controller.messages.appendText(message+"\n");
+					serverStart1.messages.appendText(message+"\n");
 				}
 			}
 		}

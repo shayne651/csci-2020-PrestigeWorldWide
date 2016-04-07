@@ -1,7 +1,6 @@
 package sample;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
@@ -11,14 +10,14 @@ import javafx.stage.Stage;
 
 public class serverStart1 extends Application {
 
-    private TextArea messages = new TextArea();
+    public static TextArea messages = new TextArea();
     private ServerSocketThread server;
 
     private Parent createContent(){
         messages.setPrefHeight(550);
         TextField input = new TextField();
         input.setOnAction(event -> {
-           String message = "Server: ";
+           String message = "Server : ";
             message += input.getText();
             input.clear();
 
@@ -51,9 +50,11 @@ public class serverStart1 extends Application {
 
     @Override
     public void stop() throws Exception {
+    	server.close();
     }
 
     public static void main(String[] args) {
         launch(args);
     }
 }
+
