@@ -20,12 +20,11 @@ class server extends Thread
 		//the upload was used to tell the server if it is downloading or uploading files, I would have changed it if i had ever gotten dir working but i couldnt so i left it 
 	}
 	
-	public server(String fileName,String ip)throws Exception
+	public server(String ip)throws Exception
 	{
 		super();
 		ip=ipA;
 		upload=true;
-		this.fileName=fileName;
 		size = 200000;
 		//the upload was used to tell the server if it is downloading or uploading files, I would have changed it if i had ever gotten dir working but i couldnt so i left it 
 	}
@@ -48,6 +47,14 @@ class server extends Thread
 			ServerSocket sSocket = new ServerSocket(5555);
 
 			cSocket = sSocket.accept();
+			//sending the file name to the server to download it
+			OutputStream os = cSocket.getOutputStream();
+			OutputStreamWriter osw = new OutputStreamWriter(os);
+			BufferedWriter out1 = new BufferedWriter(osw);
+			String fileName = file.getName();
+			String message = fileName +"\n";
+			out1.write(message);
+			out1.flush();
 			System.out.println("Connection Accepted");
 			//sending the file from the server to the client
 			System.out.println(file.length());
@@ -76,10 +83,16 @@ class server extends Thread
 			int currentTotal=0;
 			//my local ip used
 			Socket cSocket = new Socket(ipA,4444);
+			//receiving filename from client
+			InputStream is = cSocket.getInputStream();
+			InputStreamReader isr = new InputStreamReader(is);
+			BufferedReader in = new BufferedReader(isr);
+			fileName = in.readLine();
+			//
 			System.out.println("Downloading file...");
 			//copying the file from the server to the client's computer 
 			byte [] transferFile = new byte[2000000];
-			InputStream is = cSocket.getInputStream();
+			is = cSocket.getInputStream();
 			FileOutputStream fos = new FileOutputStream("copy-"+fileName);
 			BufferedOutputStream out = new BufferedOutputStream(fos);
 			read = is.read(transferFile,0,transferFile.length);

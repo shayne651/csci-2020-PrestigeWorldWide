@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -45,7 +46,10 @@ public class serverStart1 extends Application {
         upload.setOnAction(event -> {
         	try 
         	{
-            	server s = new server("test.txt","127.0.0.1"); //creates the thread
+                FileChooser filePicker = new FileChooser();
+                filePicker.setTitle("Open File");
+                File file = filePicker.showOpenDialog(primaryStage);
+                server s = new server(file);
                 s.start();
 			} 
         	catch (Exception e) 
@@ -58,7 +62,7 @@ public class serverStart1 extends Application {
         download.setOnAction(event -> {
             try
             {
-                server s = new server("test.txt","127.0.0.1"); //creates the thread
+                server s = new server("127.0.0.1"); //creates the thread
                 s.start();
             }
             catch (Exception e)

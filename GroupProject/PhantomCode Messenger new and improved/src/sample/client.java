@@ -11,12 +11,11 @@ class client extends Thread
 	private static String fileName;
 	private static String ipA;
 
-	public client(String filename, String ipA)
+	public client(String ipA)
 	{
 		//calls the super class to start the thread
 		super();
 		//gives the file if it can
-		this.fileName=filename;
 		//upload or download
 		upload=false;
 		//random size (i couldnt figure out how to get the actual size)
@@ -56,9 +55,15 @@ class client extends Thread
 			//my local ip used
 			Socket socket = new Socket(ipA,5555);
 			System.out.println("connected");
+			//receiving filename from client
+			InputStream is = socket.getInputStream();
+			InputStreamReader isr = new InputStreamReader(is);
+			BufferedReader in = new BufferedReader(isr);
+			fileName = in.readLine();
+			//
 			//copying the file from the server to the client's computer 
 			byte [] transferFile = new byte[2000000];
-			InputStream is = socket.getInputStream();
+			is = socket.getInputStream();
 			FileOutputStream fos = new FileOutputStream("copy-"+fileName);
 			BufferedOutputStream out = new BufferedOutputStream(fos);
 			read = is.read(transferFile,0,transferFile.length);
@@ -90,6 +95,14 @@ class client extends Thread
 		{
 			ServerSocket sSocket = new ServerSocket(4444);
 			Socket cSocket = sSocket.accept();
+			//sending the file name to the server to download it
+			OutputStream os = cSocket.getOutputStream();
+			OutputStreamWriter osw = new OutputStreamWriter(os);
+			BufferedWriter out1 = new BufferedWriter(osw);
+			String fileName = file.getName();
+			String message = fileName +"\n";
+			out1.write(message);
+			out1.flush();
 			System.out.println("Connection Accepted");
 			//sending the file from the server to the client
 			System.out.println(file.length());

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.scene.effect.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -23,4 +24,14 @@
          </children>
       </VBox>
    </left>
+   <bottom>
+      <ImageView fitHeight="64.0" fitWidth="605.0" pickOnBounds="true" BorderPane.alignment="CENTER">
+         <image>
+            <Image url="@space.jpg" />
+         </image>
+      </ImageView>
+   </bottom>
+   <padding>
+      <Insets top="3.0" />
+   </padding>
 </BorderPane>

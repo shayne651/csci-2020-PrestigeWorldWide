@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -45,7 +46,10 @@ public class clientStart extends Application {
         upload.setOnAction(event -> {
             try
             {
-            	client s = new client(new File("C:/Users/shayn/Desktop/group/test.txt"));
+                FileChooser filePicker = new FileChooser();
+                filePicker.setTitle("Open File");
+                File file = filePicker.showOpenDialog(primaryStage);
+            	client s = new client(file);
                 s.start();
 			}
             catch (Exception e)
@@ -58,7 +62,7 @@ public class clientStart extends Application {
         download.setOnAction(event -> {
             try
             {
-                client s = new client(new File("C:/Users/shayn/Desktop/group/test.txt"));
+                client s = new client("127.0.0.1");
                 s.start();
             }
             catch (Exception e)
